@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cerca Video Eporner</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      width: 60%;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background-color: #ff5050;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .video {
+      background-color: #222;
+      margin: 15px auto;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 600px;
+      text-align: left;
+    }
+    .video img {
+      width: 100%;
+      border-radius: 5px;
+    }
+    .video h3 {
+      margin: 10px 0 5px;
+    }
+    .video a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cerca su Eporner</h1>
+  <input type="text" id="search" placeholder="Scrivi un fetish tipo bdsm, latex, feet">
+  <br>
+  <button onclick="cercaVideo()">Cerca</button>
+  <div id="risultati"></div>
+
+  <script>
+    async function cercaVideo() {
+      const query = document.getElementById("search").value;
+      const container = document.getElementById("risultati");
+      container.innerHTML = "<p>Caricamento...</p>";
+
+      const url = `https://www.eporner.com/api/v2/video/search/?query=${encodeURIComponent(query)}&per_page=10&thumbsize=big`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        container.innerHTML = "";
+
+        data.videos.forEach(video => {
+          const div = document.createElement("div");
+          div.className = "video";
+          div.innerHTML = `
+            <a href="${video.url}" target="_blank">
+              <img src="${video.default_thumb}" alt="Anteprima">
+              <h3>${video.title}</h3>
+              <p>Durata: ${video.length_min} min</p>
+            </a>
+          `;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        container.innerHTML = "<p>Errore durante il caricamento dei video.</p>";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
